@@ -1,3 +1,6 @@
+import networkx as nx
+
+
 class Heuristic:
     def __init__(self, graph, capacity):
         self.graph = graph
@@ -15,13 +18,14 @@ class Heuristic:
             cond = len(graph.nodes) > 1
         return route_list
 
-    def get_route(self, graph):
+    def get_route(self, graph: nx.Graph):
         first_node_in_route, last_node_in_route = graph.nodes(data=True)[0].copy(), graph.nodes(data=True)[0].copy()
         first_node_in_route['node_id'] = 0
         last_node_in_route['node_id'] = 0
         first_node_in_route['b_i'] = 0
         route = [first_node_in_route, last_node_in_route]
         capacity = self.capacity
+        graph_second_copy = graph.copy()
         graph_copy = graph.copy()
         while True:
             node_metrics_dict = {}
@@ -54,15 +58,20 @@ class Heuristic:
                                              next_node_info['service_time'],
                                              graph[next_node_id][last_node_in_route['node_id']]['weight'])
 
-            if (capacity - next_node_info['demand']) < 0 \
-                    or last_node_in_route_b_i > last_node_in_route['due_date'] \
+            if (capacity - next_node_info['demand']) < 0:
+                break
+            if last_node_in_route_b_i > last_node_in_route['due_date'] \
                     or buffr_node_info['b_i'] > buffr_node_info['due_date']:
+                graph_copy.remove_node(next_node_id)
+                continue
+            if len(graph_copy.nodes) < 2:
                 break
             route.insert(-1, buffr_node_info)
             graph_copy.remove_node(next_node_id)
             last_node_in_route['b_i'] = last_node_in_route_b_i
             capacity -= next_node_info['demand']
-        return route, graph_copy
+        graph_second_copy.remove_nodes_from([it['node_id'] for it in route if it['node_id']!=0])
+        return route, graph_second_copy
 
 
 def get_b_j(e_j, b_i, s_i, weight_i_j):  # compute services begin time

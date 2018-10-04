@@ -43,8 +43,8 @@ def update_b_i_for_route(graph, route, i):
 
 
 if __name__ == '__main__':
-    file_name = 'RC207'
-    customers = customers.Customers(file_name + '.TXT')
+    file_name = 'C108'
+    customers = customers.Customers(file_name + '.txt')
     graph = customers.graph
     capacity = customers.capacity
     initSolver = initialSolution.Heuristic(graph, capacity)

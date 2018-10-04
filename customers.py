@@ -5,7 +5,7 @@ from scipy.spatial import distance
 
 class Customers:
     def __init__(self, file_name):
-        file = open('instances/' + file_name)
+        file = open('./instances/' + file_name)
         self.data = file.read().split('\n')
         self.vehicle_number = int(re.findall('[0-9]+', self.data[4])[0])
         self.capacity = int(re.findall('[0-9]+', self.data[4])[1])

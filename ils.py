@@ -52,7 +52,7 @@ class LocalSearch:
 
     def iter_loc_search(self, optimised_routes):
         history = [optimised_routes]
-        for _ in range(10):
+        for _ in range(25):
             perturbated_routes = self.perturbation(optimised_routes.copy())
             optimised_routes = self.local_search(perturbated_routes.copy())
             history.append(optimised_routes)
@@ -115,10 +115,10 @@ class LocalSearch:
         old_distance = get_objective_function_value(self.graph, [route_a, route_b])
         route_b = route_b[:node_b] + [route_a.pop(node_a)] + route_b[node_b:]
         if len(route_a) > 2:
-            route_a = self.update_b_i_for_route(route_a, node_a - 1)
+            route_a = self.update_b_i_for_route(route_a, node_a)
         else:
             route_a = []
-        route_b = self.update_b_i_for_route(route_b, node_b - 1)
+        route_b = self.update_b_i_for_route(route_b, node_b)
         delta = old_distance - get_objective_function_value(self.graph, [route_a, route_b])
         perturbation_valid = is_route_valid(route_a, self.capacity) and is_route_valid(route_b, self.capacity)
         return [perturbation_valid, route_a, route_b, delta]
