@@ -11,10 +11,8 @@ def plot_routes(_graph: nx.Graph, route_list):
     pos = dict(
         zip(_graph.nodes, zip(*[[it[1] for it in _graph.nodes.data(key)] for key in ("x_coord", "y_coord")])))
     color_map = plt.cm.get_cmap('cubehelix')
-    # print(color_map)
     for i, route in enumerate(route_list):
         color = color_map((i + 1) / len(route_list))
-        # print(color[:-1])
         nx.draw_networkx_nodes(_graph, nodelist=[it['node_id'] for it in route[1:-1]], pos=pos, node_size=50,
                                node_color=[color[:-1]] * len(route[1:-1]))
         for ind in range(1, len(route)):
@@ -32,19 +30,30 @@ def result_output(file_name, solution):
             out_file.write('\n')
 
 
+def update_b_i_for_route(graph, route, i):
+    for index in range(i, len(route)):  # compute services begin time beginning with node with index i
+        previous_node_id = route[index - 1]['node_id']
+        node_id = route[index]['node_id']
+        node_begin_service_time = initialSolution.get_b_j(route[index]['ready_time'],
+                                                          route[index - 1]['b_i'],
+                                                          route[index - 1]['service_time'],
+                                                          graph[previous_node_id][node_id]['weight'])
+        route[index]['b_i'] = node_begin_service_time
+    return route
+
+
 if __name__ == '__main__':
-    file_name = 'C108'
-    customers = customers.Customers(file_name + '.txt')
+    file_name = 'RC207'
+    customers = customers.Customers(file_name + '.TXT')
     graph = customers.graph
     capacity = customers.capacity
     initSolver = initialSolution.Heuristic(graph, capacity)
     initSolution = initSolver.routes
-    print(ils.get_objective_function_value(graph, initSolution))
     local_search = ils.LocalSearch(graph, initSolution, capacity)
-    optimazed_routes = local_search.optimized_routes
-    # for route in optimazed_routes:
-    #     print('\n')
-    #     print(optimazed_routes)
-    print(ils.get_objective_function_value(graph, optimazed_routes))
-    plot_routes(graph, initSolution)
-    result_output(file_name, optimazed_routes)
+    global_optimum_routes = local_search.global_opt_solution
+    # plot_routes(graph, global_optimum_routes)
+    result_solution = []
+    for i in range(len(global_optimum_routes)):
+        new = update_b_i_for_route(graph, global_optimum_routes[i], 1)
+        result_solution.append(new)
+    result_output(file_name, result_solution)
