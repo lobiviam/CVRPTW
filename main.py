@@ -43,17 +43,17 @@ def update_b_i_for_route(graph, route, i):
 
 
 if __name__ == '__main__':
-    file_name = 'C108'
-    customers = customers.Customers(file_name + '.txt')
+    file_name = 'C249'
+    customers = customers.Customers(file_name + '.TXT')
     graph = customers.graph
     capacity = customers.capacity
     initSolver = initialSolution.Heuristic(graph, capacity)
     initSolution = initSolver.routes
     local_search = ils.LocalSearch(graph, initSolution, capacity)
     global_optimum_routes = local_search.global_opt_solution
-    # plot_routes(graph, global_optimum_routes)
     result_solution = []
     for i in range(len(global_optimum_routes)):
         new = update_b_i_for_route(graph, global_optimum_routes[i], 1)
         result_solution.append(new)
+    plot_routes(graph, result_solution)
     result_output(file_name, result_solution)

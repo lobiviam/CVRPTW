@@ -52,7 +52,7 @@ class LocalSearch:
 
     def iter_loc_search(self, optimised_routes):
         history = [optimised_routes]
-        for _ in range(25):
+        for _ in range(3):
             perturbated_routes = self.perturbation(optimised_routes.copy())
             optimised_routes = self.local_search(perturbated_routes.copy())
             history.append(optimised_routes)
@@ -82,7 +82,7 @@ class LocalSearch:
                     perturbations_list.append([cand_list_swap, route_a_index, route_b_index])
                 if cand_list_cross[0]:
                     perturbations_list.append([cand_list_cross, route_a_index, route_b_index])
-                if cand_list_cross[0]:
+                if cand_list_relocate[0]:
                     perturbations_list.append([cand_list_relocate, route_a_index, route_b_index])
 
         optimal_perturbation = max(perturbations_list, key=lambda x: x[0][3])

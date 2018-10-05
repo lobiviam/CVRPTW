@@ -54,14 +54,13 @@ class Heuristic:
             buffr_node_info['node_id'] = next_node_id
             buffr_node_info['b_i'] = next_node_b_i
 
-            last_node_in_route_b_i = get_b_j(last_node_in_route['ready_time'], next_node_b_i,
+            last_node_in_route_b_i = get_b_j(last_node_in_route['ready_time'], buffr_node_info['b_i'],
                                              next_node_info['service_time'],
-                                             graph[next_node_id][last_node_in_route['node_id']]['weight'])
+                                             graph[buffr_node_info['node_id']][last_node_in_route['node_id']]['weight'])
 
-            if (capacity - next_node_info['demand']) < 0:
-                break
-            if last_node_in_route_b_i > last_node_in_route['due_date'] \
-                    or buffr_node_info['b_i'] > buffr_node_info['due_date']:
+            if (capacity - buffr_node_info['demand']) < 0 \
+                    or (last_node_in_route_b_i > last_node_in_route['due_date']) \
+                    or (buffr_node_info['b_i'] > buffr_node_info['due_date']):
                 graph_copy.remove_node(next_node_id)
                 continue
             if len(graph_copy.nodes) < 2:
@@ -69,8 +68,8 @@ class Heuristic:
             route.insert(-1, buffr_node_info)
             graph_copy.remove_node(next_node_id)
             last_node_in_route['b_i'] = last_node_in_route_b_i
-            capacity -= next_node_info['demand']
-        graph_second_copy.remove_nodes_from([it['node_id'] for it in route if it['node_id']!=0])
+            capacity -= buffr_node_info['demand']
+        graph_second_copy.remove_nodes_from([it['node_id'] for it in route if it['node_id'] != 0])
         return route, graph_second_copy
 
 
