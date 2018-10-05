@@ -124,14 +124,13 @@ class LocalSearch:
         return [perturbation_valid, route_a, route_b, delta]
 
     def update_b_i_for_route(self, route, i):
-        for index in range(i, len(route)):  # compute services begin time beginning with node with index i
+        for index in range(1, len(route)):  # compute services begin time beginning with node with index i
             previous_node_id = route[index - 1]['node_id']
             node_id = route[index]['node_id']
-            node_begin_service_time = initialSolution.get_b_j(route[index]['ready_time'],
-                                                              route[index - 1]['b_i'],
-                                                              route[index - 1]['service_time'],
-                                                              self.graph[previous_node_id][node_id]['weight'])
-            route[index]['b_i'] = node_begin_service_time
+            route[index]['b_i'] = initialSolution.get_b_j(route[index]['ready_time'],
+                                                          route[index - 1]['b_i'],
+                                                          route[index - 1]['service_time'],
+                                                          self.graph[previous_node_id][node_id]['weight'])
         return route
 
 

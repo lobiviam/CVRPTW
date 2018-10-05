@@ -43,7 +43,7 @@ def update_b_i_for_route(graph, route, i):
 
 
 if __name__ == '__main__':
-    file_name = 'C249'
+    file_name = 'R168'
     customers = customers.Customers(file_name + '.TXT')
     graph = customers.graph
     capacity = customers.capacity
